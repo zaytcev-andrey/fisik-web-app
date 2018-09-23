@@ -3,15 +3,16 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "node server.js",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "postinstall": "ng build --output-path dist"
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^6.1.0",
+    "@angular/animations": "^6.1.8",
     "@angular/common": "^6.1.0",
     "@angular/compiler": "^6.1.0",
     "@angular/core": "^6.1.0",
@@ -20,7 +21,14 @@
     "@angular/platform-browser": "^6.1.0",
     "@angular/platform-browser-dynamic": "^6.1.0",
     "@angular/router": "^6.1.0",
+    "body-parser": "^1.18.3",
     "core-js": "^2.5.4",
+    "express": "^4.16.3",
+    "font-awesome": "^4.7.0",
+    "mongodb": "^3.1.6",
+    "mongoose": "^5.2.17",
+    "primeicons": "^1.0.0-beta.10",
+    "primeng": "^6.1.4",
     "rxjs": "~6.2.0",
     "zone.js": "~0.8.26"
   },

@@ -1,0 +1,42 @@
+<p-panel >
+    <p-header>
+        Параметры поиска
+    </p-header>
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12 ui-md-4">
+            <div class="ui-inputgroup">
+                <span class="ui-inputgroup-addon"><i class="fa fa-user"></i></span>
+                <input type="text" pInputText placeholder="Фамилия">         
+            </div>
+        </div>
+        
+        <div class="ui-g-12 ui-md-4">
+            <div class="ui-inputgroup">
+                <span class="ui-inputgroup-addon"></span>
+                <input type="text" pInputText placeholder="Имя">    
+            </div>
+        </div>
+                
+        <div class="ui-g-12 ui-md-4">
+            <div class="ui-inputgroup">
+                <span class="ui-inputgroup-addon"></span>
+                <input type="text" pInputText placeholder="Отчество">      
+            </div>
+        </div>
+    </div>
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12 ui-md-4">
+            <div class="ui-inputgroup">
+                <!--p-calendar [(ngModel)]="date3" [showIcon]="true"></p-calendar-->       
+                <p-calendar [showIcon]="true"></p-calendar>
+            </div>
+        </div>
+        
+        <div class="ui-g-12 ui-md-4">
+            <div class="ui-inputgroup">
+                <p-dropdown placeholder="Место рождения" optionLabel="Место рождения" [showClear]="true"></p-dropdown>
+            </div>
+        </div>
+    </div>
+    <p-button icon="pi pi-check" label="Find"></p-button>
+</p-panel>
