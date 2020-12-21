@@ -17,7 +17,7 @@ app.listen(port, function ()
 
 // db connection
 // mogoose connection url
-var mongoDB = 'mongodb://localhost/test';
+var mongoDB = 'mongodb://localhost:27017/test';
 mongoose.connect(mongoDB, { useNewUrlParser: true });
 // Получение Mongoose для использования глобаного промиса
 mongoose.Promise = global.Promise;
