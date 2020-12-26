@@ -41,26 +41,51 @@ nightmare
     .type('input#ctl00_cphBody_tbPrsFirstName', 'Иван')
     .type('input#ctl00_cphBody_tbPrsMiddleName', 'Иванович')
     .click('input#ctl00_cphBody_btnSearch')
-    .wait('table#ctl00_cphBody_gvDebtors')
-    .evaluate(() => document.querySelector('#ctl00_cphBody_gvDebtors').innerHTML)
+    // .wait('table#ctl00_cphBody_gvDebtors') always exist
+    .wait(5000)
+    .evaluate(() => document.querySelector('body').innerHTML)
+    //.evaluate(() => document.querySelector('#ctl00_cphBody_gvDebtors').innerHTML)
     //.end()
 .then(response => {
-    console.log(response);
+    console.log('getting data from table');
     console.log(getData(response));
 })
 .catch(err => {
     console.log(err);
 })
 
-let getData = (html) => {
-    data = [];
-    const $ = cheerio.load(html);
-    console.log($);
-    $('table.itemlist tr td:nth-child(3)').each((i, elem) => {
-      data.push({
-        title : $(elem).text(),
-        link : $(elem).find('a.storylink').attr('href')
+function getData(html){
+  data = [];
+  const $ = cheerio.load(html);
+  $('table#ctl00_cphBody_gvDebtors > tbody > tr').each((i, elem) => {
+    if (i)
+    {
+      var name = '';
+      var taxpayerNumber = 0;
+      var region = '';
+      var address = '';
+      $('td', elem).each((j, cell) => {
+        if (j === 1) {
+          name = $(cell).text().trim();
+        }
+        else if (j === 2) {
+          taxpayerNumber = Number($(cell).text().trim());
+        }
+        else if (j === 5) {
+          region = $(cell).text().trim();
+        }
+        else if (j === 6) {
+          address = $(cell).text().trim();
+        }
       });
-    });
-    return data;
-  }
+      debtor = {
+        'name' : name,
+        'taxpayerNumber' : taxpayerNumber,
+        'region' : region,
+        'address' : address
+      };
+      data.push(debtor);
+    }
+  });
+  return data;
+}
