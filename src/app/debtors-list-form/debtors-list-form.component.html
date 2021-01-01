@@ -1,0 +1,19 @@
+<h3 class="first">Результаты поиска</h3>
+<p-table [value]="debtors">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Должник</th>
+            <th>ИНН</th>
+            <th>Регион</th>
+            <th>Адрес</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-debtor>
+        <tr>
+            <td>{{debtor.name}}</td>
+            <td>{{debtor.taxpayerNumber}}</td>
+            <td>{{debtor.region}}</td>
+            <td>{{debtor.address}}</td>
+        </tr>
+    </ng-template>
+</p-table>

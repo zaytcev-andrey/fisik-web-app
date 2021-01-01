@@ -6,12 +6,15 @@ import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
+import { TableModule } from 'primeng/table';
 import { RequestFormComponent } from './request-form/request-form.component';
+import { DebtorsListFormComponent } from './debtors-list-form/debtors-list-form.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    RequestFormComponent
+    RequestFormComponent,
+    DebtorsListFormComponent
   ],
   imports: [
     BrowserModule,
@@ -19,7 +22,8 @@ import { RequestFormComponent } from './request-form/request-form.component';
     PanelModule,
     ButtonModule,
     CalendarModule,
-    DropdownModule
+    DropdownModule,
+    TableModule
   ],
   providers: [],
   bootstrap: [AppComponent]
