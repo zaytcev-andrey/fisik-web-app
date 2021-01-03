@@ -6,7 +6,7 @@
         <div class="ui-g-12 ui-md-4">
             <div class="ui-inputgroup">
                 <span class="ui-inputgroup-addon"><i class="fa fa-address-card"></i></span>
-                <input type="text" pInputText placeholder="Фамилия">         
+                <input type="text" pInputText placeholder="Фамилия" pInputText [(ngModel)]="surname">
             </div>
         </div>
     </div>
@@ -14,7 +14,7 @@
         <div class="ui-g-12 ui-md-4">
             <div class="ui-inputgroup">
                 <span class="ui-inputgroup-addon"><i class="fa fa-address-card"></i></span>
-                <input type="text" pInputText placeholder="Имя">    
+                <input type="text" pInputText placeholder="Имя" pInputText [(ngModel)]="name">    
             </div>
         </div>
     </div>
@@ -22,7 +22,7 @@
         <div class="ui-g-12 ui-md-4">
             <div class="ui-inputgroup">
                 <span class="ui-inputgroup-addon"><i class="fa fa-address-card"></i></span>
-                <input type="text" pInputText placeholder="Отчество">      
+                <input type="text" pInputText placeholder="Отчество" pInputText [(ngModel)]="middleName">      
             </div>
         </div>
     </div>
@@ -39,13 +39,13 @@
         <div class="ui-g-12 ui-md-4">
             <div class="ui-inputgroup">
                 <span class="ui-inputgroup-addon"><i class="fa fa-address-card"></i></span>
-                <input type="text" pInputText placeholder="Место рождения">      
+                <input type="text" pInputText placeholder="Место рождения" pInputText [(ngModel)]="address">      
             </div>
         </div>
     </div>
     <div class="ui-g ui-fluid">
         <div class="ui-g-12 ui-md-4">
-            <p-button icon="pi pi-check" label="Найти"></p-button>
+            <p-button icon="pi pi-check" label="Найти" (onClick)="onClickSearch()"></p-button>
         </div>
     </div>
 </p-panel>

@@ -3,13 +3,16 @@
 // create our app express
 var express  = require('express');
 var app      = express();          
+const bodyParser = require('body-parser');
 var mongoose = require('mongoose'); 
 const Nightmare = require('nightmare');
 const cheerio = require('cheerio');
+const { SelectMultipleControlValueAccessor } = require('@angular/forms');
 
 // Create link to Angular build directory
 var distDir = __dirname + "/dist/";
 app.use(express.static(distDir));
+app.use(bodyParser.json());
 
 var port = 12345;
 app.listen(port, function () 
@@ -32,7 +35,7 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 const nightmare = Nightmare({ show : true });
 const url = 'https://bankrot.fedresurs.ru/DebtorsSearch.aspx';
 
-nightmare
+/*nightmare
     .goto(url)
     .wait('body')
     .click('input#ctl00_cphBody_rblDebtorType_1')
@@ -52,7 +55,7 @@ nightmare
 })
 .catch(err => {
     console.log(err);
-})
+})*/
 
 function getData(html){
   data = [];
@@ -89,3 +92,83 @@ function getData(html){
   });
   return data;
 }
+
+async function getDebtors(surname, name, middleName, debtors) {
+  const nightmare = Nightmare({ show : true });
+  const url = 'https://bankrot.fedresurs.ru/DebtorsSearch.aspx';
+
+  let response = await
+  nightmare
+    .goto(url)
+    .wait('body')
+    .click('input#ctl00_cphBody_rblDebtorType_1')
+    .wait(5000)
+    .type('input#ctl00_cphBody_tbPrsLastName', surname ? surname : '')
+    .type('input#ctl00_cphBody_tbPrsFirstName', name ? name : '')
+    .type('input#ctl00_cphBody_tbPrsMiddleName', middleName ? middleName : '')
+    .click('input#ctl00_cphBody_btnSearch')
+    // .wait('table#ctl00_cphBody_gvDebtors') always exist
+    .wait(5000)
+    .evaluate(() => document.querySelector('body').innerHTML)
+    //.evaluate(() => document.querySelector('#ctl00_cphBody_gvDebtors').innerHTML)
+    .end()
+  .then(response => {
+      console.log('getting data from table');      
+      debtors = getData(response);
+      console.log(debtors);
+  })
+  .catch(err => {
+      console.log(err);
+  });
+
+  await response;
+
+  constole.log(debtors);
+}
+
+// routes
+app.get('/api/debtors', async function(req, res) 
+{
+  const { surname, name, middleName } = req.query;
+
+  const nightmare = Nightmare({ show : true });
+  const url = 'https://bankrot.fedresurs.ru/DebtorsSearch.aspx';
+
+  let debtors = [];
+
+  let response = 
+  nightmare
+    .goto(url)
+    .wait('body')
+    .click('input#ctl00_cphBody_rblDebtorType_1')
+    .wait(5000)
+    .type('input#ctl00_cphBody_tbPrsLastName', surname ? surname : '')
+    .type('input#ctl00_cphBody_tbPrsFirstName', name ? name : '')
+    .type('input#ctl00_cphBody_tbPrsMiddleName', middleName ? middleName : '')
+    .click('input#ctl00_cphBody_btnSearch')
+    // .wait('table#ctl00_cphBody_gvDebtors') always exist
+    .wait(5000)
+    .evaluate(() => document.querySelector('body').innerHTML)
+    //.evaluate(() => document.querySelector('#ctl00_cphBody_gvDebtors').innerHTML)
+    .end()
+  .then(response => {
+      console.log('getting data from table');      
+      debtors = getData(response);
+      console.log(debtors);
+  })
+  .catch(err => {
+      console.log(err);
+  });
+
+  await response;
+
+  for (let debt of debtors) {
+    let [surname, name, middleName] = debt.name.split(' ');
+    debt.surname = surname;
+    debt.name = name;
+    debt.middleName = middleName;
+  }
+
+  res.json( debtors );
+
+});

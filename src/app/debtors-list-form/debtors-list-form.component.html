@@ -8,12 +8,12 @@
             <th>Адрес</th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-debtor>
+    <ng-template pTemplate="body" let-debtors>
         <tr>
-            <td>{{debtor.name}}</td>
-            <td>{{debtor.taxpayerNumber}}</td>
-            <td>{{debtor.region}}</td>
-            <td>{{debtor.address}}</td>
+            <td>{{debtors.surname}} {{debtors.name}} {{debtors.middleName}}</td>
+            <td>{{debtors.taxpayerNumber}}</td>
+            <td>{{debtors.region}}</td>
+            <td>{{debtors.address}}</td>
         </tr>
     </ng-template>
 </p-table>

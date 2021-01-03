@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
 import { Debtor } from '../debtor/debtor';
+import { DebtorsService } from '../debtor/debtors.service';
 
 @Component({
   selector: 'debtors-list-form',
@@ -10,14 +11,17 @@ import { Debtor } from '../debtor/debtor';
 })
 export class DebtorsListFormComponent implements OnInit {
 
-  debtors: Debtor[];
+  debtors1: Debtor[];
+  @Input() debtors: Debtor[];
 
-  constructor() { }
+  constructor(private debtorsService: DebtorsService) { }
 
   ngOnInit() {
-    this.debtors = [ 
-      { name : 'Test', taxpayerNumber : 1, region : 'Test', address : 'Test' }, 
-      { name : 'Test', taxpayerNumber : 2, region : 'Test', address : 'Test' } ];
+    this.debtors1 = [ 
+      { surname: '', name : 'Test', middleName: '', taxpayerNumber : 1, region : 'Test', address : 'Test' }, 
+      { surname: '', name : 'Test', middleName: '', taxpayerNumber : 2, region : 'Test', address : 'Test' } ];
   }
+
+
 
 }
