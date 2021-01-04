@@ -135,8 +135,9 @@ app.get('/api/debtors', async function(req, res)
   const url = 'https://bankrot.fedresurs.ru/DebtorsSearch.aspx';
 
   let debtors = [];
+  let multiPage = false;
 
-  let response = 
+  /*let response = 
   nightmare
     .goto(url)
     .wait('body')
@@ -150,17 +151,71 @@ app.get('/api/debtors', async function(req, res)
     .wait(5000)
     .evaluate(() => document.querySelector('body').innerHTML)
     //.evaluate(() => document.querySelector('#ctl00_cphBody_gvDebtors').innerHTML)
-    .end()
-  .then(response => {
-      console.log('getting data from table');      
-      debtors = getData(response);
-      console.log(debtors);
-  })
-  .catch(err => {
-      console.log(err);
-  });
+    .then(response => {
+        console.log('getting data from table');      
+        debtors = getData(response);
+        console.log(debtors);
+    })
+    .catch(err => {
+        console.log(err);
+    });
 
-  await response;
+  await response;*/
+
+  let requestPromise = 
+  nightmare
+    .goto(url)
+    .wait('body')
+    .click('input#ctl00_cphBody_rblDebtorType_1')
+    .wait(5000)
+    .type('input#ctl00_cphBody_tbPrsLastName', surname ? surname : '')
+    .type('input#ctl00_cphBody_tbPrsFirstName', name ? name : '')
+    .type('input#ctl00_cphBody_tbPrsMiddleName', middleName ? middleName : '')
+    .click('input#ctl00_cphBody_btnSearch')
+    // .wait('table#ctl00_cphBody_gvDebtors') always exist
+    .wait(5000)
+    .evaluate(() => document.querySelector('body').innerHTML)
+    //.evaluate(() => document.querySelector('#ctl00_cphBody_gvDebtors').innerHTML)
+    .then(response => {
+        console.log('getting data from table');      
+        debtors = debtors.concat(getData(response));
+        console.log(debtors);
+    })
+    .catch(err => {
+        console.log(err);
+    });
+
+  await requestPromise;
+
+  const hrefs = await nightmare
+  .evaluate(() => {
+    const hrefs = [];
+    // Find all the URLs on the page you want to scrape and store them in an array
+    document.querySelectorAll('#ctl00_cphBody_gvDebtors > tbody > tr.pager > td > table > tbody > tr a').forEach(e => {
+      hrefs.push(e.href)
+    })
+    return hrefs; // array of urls
+  });
+  console.log(hrefs);
+
+  for (let hrefPage of hrefs) {
+    await nightmare
+      .goto(hrefPage)
+      .wait(1000)
+      .evaluate(() => document.querySelector('body').innerHTML)
+      .then(response => {
+          console.log('getting data from table');      
+          debtors = debtors.concat(getData(response));
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  }
+
+  await nightmare
+  .end()
+  .then(()=>{});
+  console.log(debtors);
 
   for (let debt of debtors) {
     let [surname, name, middleName] = debt.name.split(' ');
