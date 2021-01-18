@@ -14,7 +14,6 @@ export class DebtorsListPagerComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    //this.pagesInfo = { self : 1, pages: [2, 3, 4] };
   }
 
 }
