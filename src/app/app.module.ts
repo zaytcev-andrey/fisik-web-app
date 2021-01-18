@@ -16,13 +16,15 @@ import { RequestFormComponent } from './request-form/request-form.component';
 import { DebtorsListFormComponent } from './debtors-list-form/debtors-list-form.component';
 import { DebtorsService } from './debtor/debtors.service';
 import { DeptorsComponent } from './deptors/deptors.component';
+import { DebtorsListPagerComponent } from './debtors-list-pager/debtors-list-pager.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     RequestFormComponent,
     DebtorsListFormComponent,
-    DeptorsComponent
+    DeptorsComponent,
+    DebtorsListPagerComponent
   ],
   imports: [
     BrowserModule,

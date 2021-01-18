@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Debtor } from './debtor';
+import { DebtorSearchResult } from './debtor';
 
 @Injectable()
 export class DebtorsService {
@@ -10,7 +11,7 @@ export class DebtorsService {
     
     constructor ( private http: HttpClient ) {}
 
-    searchDebtors(surname: string, name: string, middleName: string): Observable<Debtor[]> {
+    searchDebtors(surname: string, name: string, middleName: string): Observable<DebtorSearchResult> {
         if (surname) {
             surname.trim();
         }
@@ -34,10 +35,10 @@ export class DebtorsService {
         paramsSearch += paramMiddleName;
         const debtorsSearchUrl = this.debtorsUrl + (paramsSearch ? ('?' + paramsSearch ) : ''); 
         console.log(debtorsSearchUrl);
-        return this.http.get<Debtor[]>(debtorsSearchUrl)
+        return this.http.get<DebtorSearchResult>(debtorsSearchUrl)
             .pipe(
                 tap(_ => console.log('fetched debtor')),
-                catchError(this.handleError<Debtor[]>('searchDebtors', []))
+                catchError(this.handleError<DebtorSearchResult>('searchDebtors', <DebtorSearchResult>{}))
         );
     }
 

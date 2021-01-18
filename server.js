@@ -189,10 +189,13 @@ app.get('/api/debtors', async function(req, res)
 
   const hrefs = await nightmare
   .evaluate(() => {
-    const hrefs = [];
+    let hrefs = [];
     // Find all the URLs on the page you want to scrape and store them in an array
     document.querySelectorAll('#ctl00_cphBody_gvDebtors > tbody > tr.pager > td > table > tbody > tr a').forEach(e => {
-      hrefs.push(e.href)
+      const hrefObj = {
+        href : e.href,
+        text: e.text };
+      hrefs.push(hrefObj);
     })
     return hrefs; // array of urls
   });
@@ -200,7 +203,7 @@ app.get('/api/debtors', async function(req, res)
 
   for (let hrefPage of hrefs) {
     await nightmare
-      .goto(hrefPage)
+      .goto(hrefPage.href)
       .wait(1000)
       .evaluate(() => document.querySelector('body').innerHTML)
       .then(response => {
@@ -224,6 +227,19 @@ app.get('/api/debtors', async function(req, res)
     debt.middleName = middleName;
   }
 
-  res.json( debtors );
+  pagesInfo = {};
+
+  if (hrefs) {
+    pagesInfo.self = 1;
+    pages = [];
+    for (let hrefPage of hrefs) {
+      pages.push(Number(hrefPage.text));
+    }
+    pagesInfo.pages = pages;
+  }
+
+  result = { pagesInfo, debtors };
+
+  res.json( result );
 
 });
