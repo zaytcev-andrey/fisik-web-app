@@ -1,0 +1,26 @@
+.td_href {
+    background:none;
+    border:none;
+    color: #5165ff;
+    font-family:"Open Sans", "Helvetica Neue", sans-serif;
+    cursor:pointer;
+    text-decoration: underline;
+}
+
+.td_href:hover {
+    background: #f2f3ff;
+    border:none;
+    color: #5165ff;
+    font-family:"Open Sans", "Helvetica Neue", sans-serif;
+    cursor:pointer;
+    text-decoration: underline;
+}
+
+.td_href:visited {
+    background: #f2f3ff;
+    border:none;
+    color: #4b2f89;
+    font-family:"Open Sans", "Helvetica Neue", sans-serif;
+    cursor:pointer;
+    text-decoration: none;
+}

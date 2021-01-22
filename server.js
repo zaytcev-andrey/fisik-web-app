@@ -129,13 +129,14 @@ async function getDebtors(surname, name, middleName, debtors) {
 // routes
 app.get('/api/debtors', async function(req, res) 
 {
-  const { surname, name, middleName } = req.query;
+  const { surname, name, middleName, page } = req.query;
+  const pageNumber = page ? Number(page) : 1;
 
   const nightmare = Nightmare({ show : true });
   const url = 'https://bankrot.fedresurs.ru/DebtorsSearch.aspx';
 
   let debtors = [];
-  let multiPage = false;
+  const getDebtorFromAllPage = false;
 
   /*let response = 
   nightmare
@@ -162,6 +163,8 @@ app.get('/api/debtors', async function(req, res)
 
   await response;*/
 
+  let selfPage = 1;
+
   let requestPromise = 
   nightmare
     .goto(url)
@@ -187,7 +190,7 @@ app.get('/api/debtors', async function(req, res)
 
   await requestPromise;
 
-  const hrefs = await nightmare
+  let hrefs = await nightmare
   .evaluate(() => {
     let hrefs = [];
     // Find all the URLs on the page you want to scrape and store them in an array
@@ -201,18 +204,56 @@ app.get('/api/debtors', async function(req, res)
   });
   console.log(hrefs);
 
-  for (let hrefPage of hrefs) {
-    await nightmare
-      .goto(hrefPage.href)
-      .wait(1000)
-      .evaluate(() => document.querySelector('body').innerHTML)
-      .then(response => {
-          console.log('getting data from table');      
-          debtors = debtors.concat(getData(response));
-      })
-      .catch(err => {
-          console.log(err);
+  // get data from all page
+  if (getDebtorFromAllPage) {
+    for (let hrefPage of hrefs) {
+      await nightmare
+        .goto(hrefPage.href)
+        .wait(1000)
+        .evaluate(() => document.querySelector('body').innerHTML)
+        .then(response => {
+            console.log('getting data from table');      
+            debtors = debtors.concat(getData(response));
+        })
+        .catch(err => {
+            console.log(err);
+        });
+    }
+  }
+  else if (pageNumber != selfPage) {
+    // should use recursion instead of this!
+    for (let hrefPage of hrefs) {
+      if (Number(hrefPage.text) === pageNumber) {
+        await nightmare
+        .goto(hrefPage.href)
+        .wait(1000)
+        .evaluate(() => document.querySelector('body').innerHTML)
+        .then(response => {
+            console.log('getting data from table');      
+            debtors = getData(response);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+      }
+    }
+
+    // get pages once again
+    hrefs = await nightmare
+      .evaluate(() => {
+        let hrefs = [];
+        // Find all the URLs on the page you want to scrape and store them in an array
+        document.querySelectorAll('#ctl00_cphBody_gvDebtors > tbody > tr.pager > td > table > tbody > tr a').forEach(e => {
+          const hrefObj = {
+            href : e.href,
+            text: e.text };
+          hrefs.push(hrefObj);
+        })
+        return hrefs; // array of urls
       });
+      console.log(hrefs);
+
+      selfPage = pageNumber;
   }
 
   await nightmare
@@ -230,7 +271,7 @@ app.get('/api/debtors', async function(req, res)
   pagesInfo = {};
 
   if (hrefs) {
-    pagesInfo.self = 1;
+    pagesInfo.self = selfPage;
     pages = [];
     for (let hrefPage of hrefs) {
       pages.push(Number(hrefPage.text));

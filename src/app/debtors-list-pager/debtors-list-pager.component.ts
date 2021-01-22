@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnInit } from '@angular/core';
 import { PagesInfo } from '../debtor/debtor'
 
 @Component({
@@ -11,9 +11,17 @@ export class DebtorsListPagerComponent implements OnInit {
   @Input()
   pagesInfo: PagesInfo;
 
+  @Output() pageNumberChanged = new EventEmitter<Number>();
+
   constructor() { }
 
   ngOnInit() {
+  }
+
+  onPageClick(event: MouseEvent) {    
+    const pageNumber = Number((event.target as HTMLElement).textContent);
+    console.log(`clicked on page ${pageNumber}`);
+    this.pageNumberChanged.emit(pageNumber);
   }
 
 }

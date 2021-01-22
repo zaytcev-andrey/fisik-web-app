@@ -2,8 +2,9 @@
   <tbody>
       <tr>
         <ng-container *ngFor="let page of pagesInfo.pages">
-          <td >{{page}}</td>
+          <td (click)="onPageClick($event)" class="td_href" id="td_href_page_{{page}}">{{page}}</td>
         </ng-container>
+        <td class="td_href:visited">{{pagesInfo.self}}</td>
       </tr>
   </tbody>
 </table>

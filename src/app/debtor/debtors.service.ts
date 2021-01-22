@@ -11,7 +11,7 @@ export class DebtorsService {
     
     constructor ( private http: HttpClient ) {}
 
-    searchDebtors(surname: string, name: string, middleName: string): Observable<DebtorSearchResult> {
+    searchDebtors(surname: string, name: string, middleName: string, pageNumber: Number = 0): Observable<DebtorSearchResult> {
         if (surname) {
             surname.trim();
         }
@@ -24,6 +24,7 @@ export class DebtorsService {
         const paramSurname = surname ? `surname=${surname}` : '';
         const paramName = name ? `name=${name}` : '';
         const paramMiddleName = middleName ? `middleName=${middleName}` : '';
+        const paramPageNumber = pageNumber ? `page=${pageNumber}` : '';
         let paramsSearch = paramSurname;
         if (paramsSearch && paramName) {
             paramsSearch += '&';
@@ -33,6 +34,10 @@ export class DebtorsService {
             paramsSearch += '&';
         }
         paramsSearch += paramMiddleName;
+        if (paramsSearch && paramPageNumber) {
+            paramsSearch += '&';
+        }
+        paramsSearch += paramPageNumber;
         const debtorsSearchUrl = this.debtorsUrl + (paramsSearch ? ('?' + paramsSearch ) : ''); 
         console.log(debtorsSearchUrl);
         return this.http.get<DebtorSearchResult>(debtorsSearchUrl)
