@@ -1,26 +1,48 @@
+.list-pager-shadow {
+    box-shadow: 0 3px 3px -2px rgba(0,0,0,.2), 0 3px 4px 0 rgba(0,0,0,.14), 0 1px 8px 0 rgba(0,0,0,.12);
+}
+
+.list-pager-container-center {
+    display: flex;
+    justify-content: center;
+}
+
 .td_href {
     background:none;
     border:none;
     color: #5165ff;
-    font-family:"Open Sans", "Helvetica Neue", sans-serif;
+    font: 90%/1.45em "Helvetica Neue",HelveticaNeue,Helvetica,Arial,sans-serif !important;
     cursor:pointer;
     text-decoration: underline;
+    min-width: 1.5em;
+    padding: .5em 1em;
+    margin-left: 2px;
+    text-align: center;
 }
 
 .td_href:hover {
-    background: #f2f3ff;
-    border:none;
-    color: #5165ff;
-    font-family:"Open Sans", "Helvetica Neue", sans-serif;
-    cursor:pointer;
-    text-decoration: underline;
+    font: 90%/1.45em "Helvetica Neue",HelveticaNeue,Helvetica,Arial,sans-serif !important;
+    -webkit-font-smoothing: inherit;
+    box-sizing: border-box;
+    display: inline-block;
+    min-width: 1.5em;
+    padding: .5em 1em;
+    margin-left: 2px;
+    text-align: center;
+    text-decoration: none !important;
+    cursor: pointer;
+    box-shadow: 0 3px 3px -2px rgba(0,0,0,.2), 0 3px 4px 0 rgba(0,0,0,.14), 0 1px 8px 0 rgba(0,0,0,.12);
 }
 
-.td_href:visited {
+.td_href_visited {
     background: #f2f3ff;
     border:none;
     color: #4b2f89;
-    font-family:"Open Sans", "Helvetica Neue", sans-serif;
+    font: 90%/1.45em "Helvetica Neue",HelveticaNeue,Helvetica,Arial,sans-serif !important;
     cursor:pointer;
     text-decoration: none;
+    min-width: 1.5em;
+    padding: .5em 1em;
+    margin-left: 2px;
+    text-align: center;
 }

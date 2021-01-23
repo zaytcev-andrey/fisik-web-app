@@ -1,11 +1,11 @@
-<table [hidden]="!pagesInfo.pages || pagesInfo.pages.length <= 1">
-  <tbody>
+<table class="list-pager-container-center">
+  <tbody [hidden]="!pagesInfo.pages || pagesInfo.pages.length <= 1">
       <tr>
         <td (click)="onPageClick($event)" [ngClass]="{'td_href': prevPage > 0, 'td_href:visited': prevPage <= 0}" [attr.value]="prevPage">Предыдущая</td>
         <ng-container *ngFor="let page of pagesInfo.pages">
-          <td (click)="onPageClick($event)" [ngClass]="{'td_href': page != pagesInfo.self, 'td_href:visited': page == pagesInfo.self}" [attr.value]="page">{{page}}</td>
+          <td (click)="onPageClick($event)" [ngClass]="{'td_href': page != pagesInfo.self, 'td_href_visited': page == pagesInfo.self}" [attr.value]="page">{{page}}</td>
         </ng-container>
-        <td (click)="onPageClick($event)" [ngClass]="{'td_href': nextPage <= pagesInfo.pages.length, 'td_href:visited': page > pagesInfo.pages.length}" [attr.value]="nextPage">Селдующая</td>
+        <td (click)="onPageClick($event)" [ngClass]="{'td_href': nextPage <= pagesInfo.pages.length, 'td_href:visited': page > pagesInfo.pages.length}" [attr.value]="nextPage">Следующая</td>
       </tr>
   </tbody>
 </table>

@@ -25,7 +25,7 @@ export class DebtorsListPagerComponent implements OnInit {
 
   onPageClick(event: MouseEvent) {
     const element = event.target as HTMLElement;
-    const attribute = element.getAttribute("value"));
+    const attribute = element.getAttribute("value");
     const pageNumber = Number(attribute);
     console.log(`clicked on page ${pageNumber}`);
     if (pageNumber > 0 && pageNumber <= this.pagesInfo.pages.length 
