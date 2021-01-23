@@ -63,6 +63,12 @@ function getData(html){
   $('table#ctl00_cphBody_gvDebtors > tbody > tr').each((i, elem) => {
     if (i)
     {
+      // pager should be skipped
+      if (elem.attribs["class"] == "pager") {
+        console.log("Pager found");
+        return;
+      }
+
       var name = '';
       var taxpayerNumber = 0;
       var region = '';
@@ -268,14 +274,13 @@ app.get('/api/debtors', async function(req, res)
     debt.middleName = middleName;
   }
 
-  pagesInfo = {};
-
+  pagesInfo = { self: selfPage, pages: [selfPage]};
   if (hrefs) {
-    pagesInfo.self = selfPage;
-    pages = [];
+    pages = [selfPage];
     for (let hrefPage of hrefs) {
       pages.push(Number(hrefPage.text));
     }
+    pages.sort();
     pagesInfo.pages = pages;
   }
 

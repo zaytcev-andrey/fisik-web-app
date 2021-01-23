@@ -44,6 +44,8 @@ export class DeptorsComponent implements OnInit {
   onDebtorSearchParamsReady(debtorSearchParams: DebtorSearchParams) {
     console.log(debtorSearchParams);
     this.debtorSearchParams = debtorSearchParams;
+    // reset page number
+    this.pageNumber = 0;
     this.searchDebtors();
   }
 
