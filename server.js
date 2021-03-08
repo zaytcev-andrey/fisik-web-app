@@ -75,6 +75,10 @@ function getData(html){
       var address = '';
       $('td', elem).each((j, cell) => {
         if (j === 1) {
+          const link = $(cell).children('a');
+          if (link) {
+            console.log($(link).attr('href'));
+          }
           name = $(cell).text().trim();
         }
         else if (j === 2) {
@@ -132,6 +136,208 @@ async function getDebtors(surname, name, middleName, debtors) {
   constole.log(debtors);
 }
 
+function getDebtorInfoFromText(textArray) {
+  let debtor = { id: -1 };
+  for (let text of textArray) {
+    const surnameFound = text.match(/Фамилия\s*([А-Яа-я0-9_]*)/);
+    if (surnameFound && surnameFound.length > 0) {
+      debtor.surname = surnameFound[1];
+    }
+    const nameFound = text.match(/Имя\s*([А-Яа-я0-9_]*)/);
+    if (nameFound && nameFound.length > 0) {
+      debtor.name = nameFound[1];
+    }
+    const middleNameFound = text.match(/Отчество\s*([А-Яа-я0-9_]*)/);
+    if (middleNameFound && middleNameFound.length > 0) {
+      debtor.middleName = middleNameFound[1];
+    }
+    const taxpayerNumberFound = text.match(/ИНН\s*(\d*)/);
+    if (taxpayerNumberFound && taxpayerNumberFound.length > 0) {
+      debtor.taxpayerNumber = taxpayerNumberFound[1];
+    }
+    const regionFound = text.match(/Регион ведения дела о банкротстве\s*([\sА-Яа-я0-9]*)/);
+    if (regionFound && regionFound.length > 0) {
+      debtor.region = regionFound[1];
+    }
+    const addressFound = text.match(/Место жительства\s*(.*)/);
+    if (addressFound && addressFound.length > 0) {
+      debtor.address = addressFound[1];
+    }
+  }
+  return debtor;
+}
+
+async function getDebtorsFullInfoFromLinks(debtorsHref, nightmare) {
+  try {
+    // get info for each debtors resf
+    let debtorsInfoArray = [];
+    let idx = 0;
+    for (let debtorHref of debtorsHref) {
+      try {
+        const debtorInfoTable = await nightmare
+          .goto(debtorHref)
+          .wait(1000)
+          .title()
+          .evaluate(() => {
+            let debtorInfoTable = [];
+            document.querySelectorAll('#right > table.au > tbody > tr').forEach(e => {
+              console.log(e.innerText);
+              debtorInfoTable.push(e.innerText);
+            });
+            console.log(debtorInfoTable);
+            return debtorInfoTable;
+          });
+        await debtorInfoTable;
+        let debtor = getDebtorInfoFromText(debtorInfoTable);
+        debtor.id = idx++;
+
+        debtorsInfoArray.push(debtor);
+      } catch(err) {
+          console.log(err);
+      }
+    }
+    return debtorsInfoArray;
+  } catch (error) {
+      console.error(error);
+      throw error;
+  }
+}
+
+async function getDebtorsFullInfo(surname, name, middleName, pageNumber) {
+  const nightmare = Nightmare({ show : true });
+  const url = 'https://bankrot.fedresurs.ru/DebtorsSearch.aspx';
+
+  try {
+    let selfPage = 1;
+
+    // get ref for each debtor from search sesult table
+    const debtorsHref = await nightmare
+      .goto(url)
+      .wait('body')
+      .click('input#ctl00_cphBody_rblDebtorType_1')
+      .wait(5000)
+      .insert('input#ctl00_cphBody_tbPrsLastName', surname ? surname : '')
+      .insert('input#ctl00_cphBody_tbPrsFirstName', name ? name : '')
+      .insert('input#ctl00_cphBody_tbPrsMiddleName', middleName ? middleName : '')
+      .click('input#ctl00_cphBody_btnSearch')
+      // .wait('table#ctl00_cphBody_gvDebtors') always exist
+      .wait(5000)
+      .evaluate(() => {
+        let debtorsHrefArray = [];
+        // Find all the URLs on the page you want to scrape and store them in an array
+        document.querySelectorAll('table#ctl00_cphBody_gvDebtors > tbody > tr > td:nth-child(2) > a').forEach(e => {
+          debtorsHrefArray.push(e.href);
+        });
+        return debtorsHrefArray; // array of urls
+      });
+
+    await debtorsHref;
+    console.log('debtorsHref:');
+    console.log(debtorsHref);
+
+    let hrefs = await nightmare
+    .evaluate(() => {
+      let hrefsTmp = [];
+      // Find all the URLs on the page you want to scrape and store them in an array
+      document.querySelectorAll('#ctl00_cphBody_gvDebtors > tbody > tr.pager > td > table > tbody > tr a').forEach(e => {
+        const hrefObj = {
+          href : e.href,
+          text: e.text };
+        hrefsTmp.push(hrefObj);
+      })
+      return hrefsTmp; // array of urls
+    });
+    console.log(hrefs);
+    
+    // get info for each debtors resf
+    let debtorsInfoArray = [];
+
+    if (pageNumber === selfPage)
+    {
+        debtorsInfoArray = await getDebtorsFullInfoFromLinks(debtorsHref, nightmare);
+    }
+    else
+    {
+        // go to certain page and process data
+
+        // should use recursion instead of this!
+        let debtorsHref = [];
+        for (let hrefPage of hrefs) 
+        {
+            if (Number(hrefPage.text) === pageNumber) 
+            {
+                // again: get reference for each debtor from search sesult table
+                debtorsHref = await nightmare
+                    .goto(hrefPage.href)
+                    .wait(1000)
+                    .evaluate(() => 
+                    {
+                        let debtorsHrefArray = [];
+                        // Find all the URLs on the page you want to scrape and store them in an array
+                        document.querySelectorAll('table#ctl00_cphBody_gvDebtors > tbody > tr > td:nth-child(2) > a').forEach(e => 
+                        {
+                            debtorsHrefArray.push(e.href);
+                        });
+                        return debtorsHrefArray; // array of urls
+                    });
+            }
+        }
+
+        // get pages reference once again
+        hrefs = await nightmare
+            .evaluate(() => 
+            {
+                let hrefsTmp = [];
+                // again: Find all the URLs on the page you want to scrape and store them in an array
+                document.querySelectorAll('#ctl00_cphBody_gvDebtors > tbody > tr.pager > td > table > tbody > tr a').forEach(e => 
+                {
+                    const hrefObj = {
+                    href : e.href,
+                    text: e.text };
+                    hrefsTmp.push(hrefObj);
+                })
+                return hrefsTmp; // array of urls
+            });
+            console.log(hrefs);
+    
+        // again: get info for each debtors resf
+        debtorsInfoArray = await getDebtorsFullInfoFromLinks(debtorsHref, nightmare);
+        selfPage = pageNumber;
+    }
+
+    pagesInfo = { self: selfPage, pages: [selfPage]};
+    if (hrefs) 
+    {
+        pages = [selfPage];
+        for (let hrefPage of hrefs) 
+        {
+            pages.push(Number(hrefPage.text));
+        }
+        pages.sort();
+        pagesInfo.pages = pages;
+    }
+
+    result = { pagesInfo, debtorsInfoArray };
+    console.log(result);
+
+    return result;
+  }
+  catch (error)
+  {
+      console.error(error);
+      throw error;
+  } 
+  finally 
+  {
+    await nightmare.end();
+  }
+}
+
+/*(async () => {
+  const debtorsInfoArray = await getDebtorsFullInfo("Иванов", "Алексей", "", 1);
+  console.log(debtorsInfoArray);
+})();*/
+
 // routes
 app.get('/api/debtors', async function(req, res) 
 {
@@ -169,6 +375,13 @@ app.get('/api/debtors', async function(req, res)
 
   await response;*/
 
+  const debtorsFullInfoResult = await getDebtorsFullInfo(surname ? surname : '', name ? name : '', middleName ? middleName : '', pageNumber);
+  res.json( debtorsFullInfoResult );
+  console.log('/api/debtors result:');
+  console.log(res);
+  return;
+
+
   let selfPage = 1;
 
   let requestPromise = 
@@ -196,6 +409,23 @@ app.get('/api/debtors', async function(req, res)
 
   await requestPromise;
 
+  const debtorsHref = await nightmare
+  .evaluate(() => {
+    const debtorsHref = [];
+    // Find all the URLs on the page you want to scrape and store them in an array
+    document.querySelectorAll('table#ctl00_cphBody_gvDebtors > tbody > tr > td:nth-child(2) > a').forEach(e => {
+      const hrefObj = {
+        href : e.href,
+        text: e.text };
+        debtorsHref.push(hrefObj);
+    });
+    console.log('debtorsHref:');
+    console.log(debtorsHref);
+    return debtorsHref; // array of urls
+  });
+  console.log('debtorsHref:');
+  console.log(debtorsHref);
+
   let hrefs = await nightmare
   .evaluate(() => {
     let hrefs = [];
@@ -209,6 +439,8 @@ app.get('/api/debtors', async function(req, res)
     return hrefs; // array of urls
   });
   console.log(hrefs);
+
+  let debtorsLink = [];
 
   // get data from all page
   if (getDebtorFromAllPage) {

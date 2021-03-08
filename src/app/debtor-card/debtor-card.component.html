@@ -1,0 +1,32 @@
+<p-card title="Данные должника">
+    <div *ngIf="debtor$ | async as debtor">
+        <p-table [value]="[debtor]">
+            <ng-template pTemplate="body" let-debtor>
+                <tr>
+                    <td>Имя</td>
+                    <td>{{debtor.name}}</td>
+                </tr>
+                <tr>
+                    <td>Фамилия</td>
+                    <td>{{debtor.surname}}</td>
+                </tr>
+                <tr>
+                    <td>Отчество</td>
+                    <td>{{debtor.middleName}}</td>
+                </tr>
+                <tr>
+                    <td>ИНН</td>
+                    <td>{{debtor.taxpayerNumber}}</td>
+                </tr>
+                <tr>
+                    <td>Регион</td>
+                    <td>{{debtor.region}}</td>
+                </tr>
+                <tr>
+                    <td>Место жительства</td>
+                    <td>{{debtor.address}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</p-card>

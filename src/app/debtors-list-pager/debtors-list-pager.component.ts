@@ -9,15 +9,16 @@ import { PagesInfo } from '../debtor/debtor'
 export class DebtorsListPagerComponent implements OnInit {
 
   @Input()
-  pagesInfo: PagesInfo;
-  prevPage: number;
-  nextPage: number;
+  pagesInfo: PagesInfo = {self: 1, pages: []};
+  prevPage: number = 0;
+  nextPage: number = 0;
 
   @Output() pageNumberChanged = new EventEmitter<Number>();
 
   constructor() { 
     this.prevPage = 0;
     this.nextPage = 0;
+    this.pagesInfo = {self: 1, pages: []};
   }
 
   ngOnInit() {
@@ -36,7 +37,7 @@ export class DebtorsListPagerComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     const changedPagesInfo = changes["pagesInfo"];
-    if (changedPagesInfo)
+    if (changedPagesInfo && changedPagesInfo.currentValue)
     {
       console.log("Cahnged pagesInfo");
       console.log("new pagesInfo.pages: " + changedPagesInfo.currentValue.pages);

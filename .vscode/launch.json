@@ -7,11 +7,18 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Debug Node Server",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}\\server.js"
-        }
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Debug Angular",
+            "url": "http://localhost:4200",
+            "webRoot": "${workspaceFolder}"
+          }
     ]
 }

@@ -1,4 +1,5 @@
 export class Debtor {
+    id: number;
     surname: string;
     name: string;
     middleName: string;
@@ -14,5 +15,5 @@ export class PagesInfo {
 
 export class DebtorSearchResult {
     pagesInfo: PagesInfo;
-    debtors: Debtor[];
+    debtorsInfoArray: Debtor[];
 }

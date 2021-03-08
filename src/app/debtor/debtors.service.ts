@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError, of } from 'rxjs';
+import { Observable, throwError, of, Subject, BehaviorSubject } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Debtor } from './debtor';
 import { DebtorSearchResult } from './debtor';
@@ -8,8 +8,14 @@ import { DebtorSearchResult } from './debtor';
 @Injectable()
 export class DebtorsService {
     private debtorsUrl = 'api/debtors';  // URL to web API
+    private debtorSearchResult$: Observable<DebtorSearchResult>;
+    private debtorSearchResultDefault = new DebtorSearchResult();
+    private debtorSearchResultSource = new BehaviorSubject<DebtorSearchResult>(this.debtorSearchResultDefault);
     
-    constructor ( private http: HttpClient ) {}
+    constructor ( private http: HttpClient ) 
+    {
+        this.debtorSearchResult$ = this.debtorSearchResultSource.asObservable();
+    }
 
     searchDebtors(surname: string, name: string, middleName: string, pageNumber: Number = 0): Observable<DebtorSearchResult> {
         if (surname) {
@@ -40,11 +46,31 @@ export class DebtorsService {
         paramsSearch += paramPageNumber;
         const debtorsSearchUrl = this.debtorsUrl + (paramsSearch ? ('?' + paramsSearch ) : ''); 
         console.log(debtorsSearchUrl);
-        return this.http.get<DebtorSearchResult>(debtorsSearchUrl)
+        const searchResult = this.http.get<DebtorSearchResult>(debtorsSearchUrl)
             .pipe(
                 tap(_ => console.log('fetched debtor')),
                 catchError(this.handleError<DebtorSearchResult>('searchDebtors', <DebtorSearchResult>{}))
         );
+        searchResult
+            .subscribe(response => {
+                this.debtorSearchResultSource.next(response);
+        }); 
+
+        return searchResult;
+    }
+
+    getDebtors(): Observable<DebtorSearchResult>
+    {
+        console.log(this.debtorSearchResultSource.getValue());
+        return this.debtorSearchResult$;
+    }
+
+    GetDebtor(id: number | string) 
+    {
+        return this.getDebtors().pipe(
+          // (+) before `id` turns the string into a number
+          map((debtorSearchResult: DebtorSearchResult) => 
+            debtorSearchResult.debtorsInfoArray.find(debtor => debtor.id === +id)));
     }
 
     private handleError<T>(operation = 'operation', result?: T) {

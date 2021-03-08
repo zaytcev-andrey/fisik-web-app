@@ -1,3 +1,5 @@
 <request-form (debtorSearchParamsReady)="onDebtorSearchParamsReady($event)"></request-form>
-<debtors-list-form [debtors]="debtors"></debtors-list-form>
-<debtors-list-pager [pagesInfo]="pagesInfo" (pageNumberChanged)="onPageNumberChanged($event)"></debtors-list-pager>
+<progress-dlg></progress-dlg>
+<!--debtors-list-form [debtors]="debtors"></debtors-list-form>
+<debtors-list-pager [pagesInfo]="pagesInfo" (pageNumberChanged)="onPageNumberChanged($event)"></debtors-list-pager-->
+<router-outlet></router-outlet>

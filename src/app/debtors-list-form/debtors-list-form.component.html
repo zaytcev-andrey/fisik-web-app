@@ -10,7 +10,11 @@
     </ng-template>
     <ng-template pTemplate="body" let-debtors>
         <tr>
-            <td>{{debtors.surname}} {{debtors.name}} {{debtors.middleName}}</td>
+            <td>
+                <a [routerLink]="['/debtor', debtors.id]" routerLinkActive="active">
+                    {{debtors.surname}} {{debtors.name}} {{debtors.middleName}}
+                </a>
+            </td>
             <td>{{debtors.taxpayerNumber}}</td>
             <td>{{debtors.region}}</td>
             <td>{{debtors.address}}</td>

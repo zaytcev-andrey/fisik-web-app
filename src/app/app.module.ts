@@ -11,12 +11,19 @@ import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
 import { TableModule } from 'primeng/table';
+import { CardModule } from 'primeng/card';
+import { DialogModule } from 'primeng/dialog';
+import { ProgressBarModule } from 'primeng/progressbar';
 // business logic
 import { RequestFormComponent } from './request-form/request-form.component';
 import { DebtorsListFormComponent } from './debtors-list-form/debtors-list-form.component';
 import { DebtorsService } from './debtor/debtors.service';
 import { DeptorsComponent } from './deptors/deptors.component';
 import { DebtorsListPagerComponent } from './debtors-list-pager/debtors-list-pager.component';
+import { DebtorsRoutingModule } from './deptors/deptors-routing.module';
+import { DebtorCardComponent } from './debtor-card/debtor-card.component';
+import { DebtorsListCtrlComponent } from './debtors-list-ctrl/debtors-list-ctrl.component';
+import { ProgressDlgComponent } from './progress-dlg/progress-dlg.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +31,10 @@ import { DebtorsListPagerComponent } from './debtors-list-pager/debtors-list-pag
     RequestFormComponent,
     DebtorsListFormComponent,
     DeptorsComponent,
-    DebtorsListPagerComponent
+    DebtorsListPagerComponent,
+    DebtorCardComponent,
+    DebtorsListCtrlComponent,
+    ProgressDlgComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +46,11 @@ import { DebtorsListPagerComponent } from './debtors-list-pager/debtors-list-pag
     ButtonModule,
     CalendarModule,
     DropdownModule,
-    TableModule
+    TableModule,
+    CardModule,
+    DialogModule,
+    ProgressBarModule,
+    DebtorsRoutingModule
   ],
   providers: [
     DebtorsService],

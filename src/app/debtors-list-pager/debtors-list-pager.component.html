@@ -1,4 +1,4 @@
-<table class="list-pager-container-center">
+<table *ngIf="pagesInfo && pagesInfo.pages" class="list-pager-container-center">
   <tbody [hidden]="!pagesInfo.pages || pagesInfo.pages.length <= 1">
       <tr>
         <td (click)="onPageClick($event)" [ngClass]="{'td_href': prevPage > 0, 'td_href:visited': prevPage <= 0}" [attr.value]="prevPage">Предыдущая</td>
