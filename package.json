@@ -24,7 +24,7 @@
     "body-parser": "^1.18.3",
     "cheerio": "^1.0.0-rc.5",
     "core-js": "^2.5.4",
-    "express": "^4.16.3",
+    "express": "^4.17.3",
     "font-awesome": "^4.7.0",
     "mongodb": "^3.1.6",
     "mongoose": "^5.2.17",
